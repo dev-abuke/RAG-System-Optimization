@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "rag-system-optimization"
+version = "0.1.0"
+description = "Develop a Retrieval-Augmented Generation (RAG) system, benchmark its performance, and implement an optimization to improve the results."
+authors = ["Abubeker Shamil <abubekershamil123@gmail.com>"]
+license = "Apache 2.0"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
