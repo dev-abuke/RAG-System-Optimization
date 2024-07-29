@@ -1,7 +1,5 @@
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain_community.vectorstores import Chroma
-from langchain.retrievers import BM25Retriever, EnsembleRetriever
-from langchain.retrievers.weaviate_hybrid_search import WeaviateHybridSearchRetriever
 
 from .chunking import TextSplitter
 from .config import load_config
