@@ -5,7 +5,7 @@ from langchain_community.vectorstores import Qdrant
 from langchain_chroma import Chroma
 from langchain_community.retrievers import BM25Retriever
 from langchain.retrievers import WeaviateHybridSearchRetriever
-from qdrant_client import QdrantClient
+from qdrant_client import QdrantClient, models
 
 from .factory import get_text_splitter
 from .config import load_config
@@ -32,11 +32,14 @@ class Retriever:
             client = QdrantClient(
                 path="db/qdrant",
             )
+            client.create_collection("MyCollection", vectors_config=models.VectorParams(size=1536, distance=models.Distance.COSINE))
+            
             self.retriever = Qdrant(
                 client=client,
                 embeddings = OpenAIEmbeddings(openai_api_key=os.getenv("OPENAI_API_KEY")),
-                collection_name="rizzbuzz"
+                collection_name="MyCollection"
             )
+            
         elif config["retriever"] == "hybrid":
             print("We are Using Weaviate Hybrid Search Retriever")
             
@@ -71,7 +74,7 @@ class Retriever:
         logger.info(f"Splits {len(splits)}")
 
         print(
-            "The Split Sample is :: ", splits[0]
+            "The Split length is :: ", len(splits), "The Document Sample is :: ", splits[0]
         )
         
         docs = self.retriever.add_documents(splits)
