@@ -54,7 +54,7 @@ def get_document_from_docx(documents: list, file_path):
 def load_and_process_data( num_articles=1000):
     dataset = load_dataset("cnn_dailymail", "3.0.0", split="validation[:1000]", cache_dir="./cache")
 
-    articles = [Document(page_content=item['article'], metadata={"id": item['id']}) for item in dataset]
+    articles = [Document(page_content=item['article'], metadata={"idx": item['id']}) for item in dataset]
 
     print(len(articles), "articles loaded", "The Test article is:", articles[0])
 
