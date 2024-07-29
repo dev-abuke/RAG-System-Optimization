@@ -12,14 +12,14 @@ from ragas.metrics import (
 
 class RagasEvaluation:
 
-    def __init__(self, test_name: str):
+    def __init__(self, test_name: str, number_of_questions: int = 3):
         # make sure the class is initialized with a test_name else raise an error
         self.test_name = test_name
 
+        self.number_of_questions = number_of_questions
+
         if not self.test_name:
             raise ValueError("Please specify a test_name.") 
-
-        self.number_of_questions = 3
 
         self.questions, self.ground_truths, self.evolution_type = self.get_questions()
 
