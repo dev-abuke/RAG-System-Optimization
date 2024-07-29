@@ -1,9 +1,11 @@
 # from langchain_chroma import Chroma
 from langchain_core.documents import Document
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
+from langchain_community.vectorstores import Qdrant
 from langchain_chroma import Chroma
 from langchain_community.retrievers import BM25Retriever
 from langchain.retrievers import WeaviateHybridSearchRetriever
+from qdrant_client import QdrantClient
 
 from .factory import get_text_splitter
 from .config import load_config
@@ -24,9 +26,17 @@ class Retriever:
 
         self.retriever_type = config["retriever"]
 
-        if config["retriever"] == "dense":
+        if config["retriever"] == "chroma_dense":
             self.retriever = Chroma(persist_directory=self.persist_directory, embedding_function=OpenAIEmbeddings(openai_api_key=os.getenv("OPENAI_API_KEY")))
-
+        if config["retriever"] == "qdrant_dense":
+            client = QdrantClient(
+                path="db/qdrant",
+            )
+            self.retriever = Qdrant(
+                client=client,
+                embeddings = OpenAIEmbeddings(openai_api_key=os.getenv("OPENAI_API_KEY")),
+                collection_name="rizzbuzz"
+            )
         elif config["retriever"] == "hybrid":
             print("We are Using Weaviate Hybrid Search Retriever")
             
@@ -63,7 +73,7 @@ class Retriever:
         print(
             "The Split Sample is :: ", splits[0]
         )
-
+        
         docs = self.retriever.add_documents(splits)
         
         logger.info(f"Documents added {docs[0]}")
@@ -72,11 +82,9 @@ class Retriever:
         results = self.retriever.similarity_search(query, k = 2)
         return results
     def get_retriever(self):
-        print("getting the retriever===================", self.retriever)
-        if config["retriever"] == "dense":
+        if config["retriever"] == "dense" or config["retriever"] == "qdrant_dense":
             return self.retriever.as_retriever(search_kwargs={'k': 2})
         elif config["retriever"] == "hybrid":
-            print("++++++++++++++++++++======Inside Get Retriever If condition =======+++++++++++++") 
             return self.retriever
 
 # Singleton instance of the Retriever
