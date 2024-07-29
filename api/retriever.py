@@ -3,7 +3,7 @@ from langchain_core.documents import Document
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain_chroma import Chroma
 from langchain_community.retrievers import BM25Retriever
-from langchain_community.retrievers import WeaviateHybridSearchRetriever
+from langchain.retrievers import WeaviateHybridSearchRetriever
 
 from .factory import get_text_splitter
 from .config import load_config
@@ -29,13 +29,13 @@ class Retriever:
 
         elif config["retriever"] == "hybrid":
             print("We are Using Weaviate Hybrid Search Retriever")
-
+            
             import weaviate
 
             auth_config = weaviate.auth.AuthApiKey(api_key=os.getenv("WEAVIATE_API_KEY"))
 
             client = weaviate.Client(
-                url="https://sandbox-rag-hrim3oyf.weaviate.network",
+                url="https://muadizqtuzo6witpfdq.c0.us-east1.gcp.weaviate.cloud",
                 additional_headers={
                         "X-Openai-Api-Key": os.getenv("OPENAI_API_KEY"),
                 },
@@ -44,7 +44,7 @@ class Retriever:
 
             self.retriever = WeaviateHybridSearchRetriever(
                 client=client,
-                index_name="LizzyAI",
+                index_name="Metala",
                 text_key="hybrid_search_text",
                 attributes=[],
                 create_schema_if_missing=True,
@@ -69,12 +69,12 @@ class Retriever:
         logger.info(f"Documents added {docs[0]}")
 
     def retrieve(self, query: str):
-        results = self.retriever.similarity_search(query)
+        results = self.retriever.similarity_search(query, k = 2)
         return results
     def get_retriever(self):
         print("getting the retriever===================", self.retriever)
         if config["retriever"] == "dense":
-            return self.retriever.as_retriever()
+            return self.retriever.as_retriever(search_kwargs={'k': 2})
         elif config["retriever"] == "hybrid":
             print("++++++++++++++++++++======Inside Get Retriever If condition =======+++++++++++++") 
             return self.retriever
