@@ -114,7 +114,7 @@ We found that context recall was rather performing poorly meaning more than half
 
 ## Result 2
 
-![alt text](image.png) 
+![alt text](screenshots/image.png) 
 
 For our next improvement we changed the chunk size to 256 and overlap to 16 and got the above result which is almost similar to our previous one
 
@@ -124,7 +124,7 @@ For our next improvement we changed the chunk size to 256 and overlap to 16 and 
 
 ## Result 3
 
-![alt text](image-1.png)
+![alt text](screenshots/image-1.png)
 
 on our 3rd RAGAS test in optimization with chunk size 900 and overlap 50, using recursive chunker and without any query translation. The result showed a significant improvement in context recall, attributing to a higher chunk size. although this result seemed promising, while we carefully investigated each question and answer [Output of Result 3](data/Qdrant_Dense_900_50_recursive_gpt35turbo_noTranslation_Q5to11.csv) we can see that the higher context recall is attributed to the the simple questions, the reasoning and multi context question are recalled relatively lower suggesting this RAG pipeline potentialy might fail for more complex questions and we needed to optimize our RAG rurther
 
@@ -136,7 +136,7 @@ It can be seen that on bench marking that this RAG pipeline have improvements bu
 
 ### Result 4
 
-![alt text](image-3.png)
+![alt text](screenshots/image-3.png)
 
 We used a simple multi query to generate 3 question and get their unique union in context retrival that could potentialy capture the context when retieved, and we can see that recall has been relatively better and answer correctness has also improved while also a multi context questions were ranked higher but faithfulness was ranked lower however we achieved higher than average overall rank
 
@@ -148,7 +148,7 @@ We saw that even though we are using 3 question against 12 question and ground t
 
 ### Result 5
 
-![alt text](image-4.png)
+![alt text](screenshots/image-4.png)
 
 We Run the RAGAs evaluation using a Hybrid Database that was implemented using Weviate which showed a really good results as can be see we have a significal increase in faithfulness and context recall was also one of the better performing one but since we did not change the faulty ground truth that had a significant effect on context recall thus we must change that also, answer correctness is on the top 2.
 
@@ -160,19 +160,19 @@ We can see that context recall faired better in context recall being in top 2
 
 ### Result 6
 
-![alt text](image-5.png)
+![alt text](screenshots/image-5.png)
 
 #### Result 6 Interpretation
 
 It shows that the context recall has incresed and answer correctness has decreased by 3% but the overall benchmark has faired best shooting up to 85% we previously did run the evaluation with multi query and compared it to "noTranslation" their is a slight increse in answer correctness while using "noTranslation", below is our evaluation using the same pipeline but with multi query
 
-![alt text](image-6.png)
+![alt text](screenshots/image-6.png)
 
 **Verdict:**  Optimize for answer correctness using reranking methods
 
 ### Result 7
 
-![alt text](image-7.png)
+![alt text](screenshots/image-7.png)
 
 We used a Rag Fusion Optimization (this eval is run on 6 different questions to gauge the changes in performance) as we will have a reranking (RRF) method implemented in RAG fusion, and we used hybrid as it gives one of the top performing evaluations in our RAG pipeline.
 
