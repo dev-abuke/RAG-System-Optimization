@@ -39,18 +39,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-def get_document_from_docx(documents: list, file_path):
-    # Load and parse HTML file found in the specified folder and subfolders
-    docx_files = [os.path.join(file_path, f) for f in os.listdir(file_path) if f.endswith('.docx')]
-
-    # Load and parse HTML files
-    for file in docx_files:
-        loader = Docx2txtLoader(file)
-        documents.extend(loader.load())
-
-    return documents
-
 def load_and_process_data( num_articles=1000):
     dataset = load_dataset("cnn_dailymail", "3.0.0", split="validation[:1000]", cache_dir="./cache")
 
@@ -62,6 +50,7 @@ def load_and_process_data( num_articles=1000):
 
 # Initialize the retriever with documents
 # documents = get_document_from_docx([], "data/raw/docx")
+
 documents = load_and_process_data()
 leng = len(documents)
 print("The Document Sample as a list length is :: ", leng)
