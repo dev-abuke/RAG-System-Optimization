@@ -1,8 +1,9 @@
 model: "gpt-3.5-turbo" # gpt-4o, gpt-3.5-turbo, gpt-4-turbo
-retriever: "dense" # dense, sparse, hybrid
+retriever: "qdrant_dense" # qdrant_dense, chroma_dense, sparse, hybrid
 text_splitter: "recursive" # sentence, character, semantic, recursive
-chunk_size: 600 # chunk_size
+chunk_size: 900 # chunk_size
 chunk_overlap: 50 # chunk_overlap
 query_translation: "no_translation" # multi_query, rag_fusion, decomposition, hyde, raptor, no_translation
+# changing the below wont affect anything i.e not currently implemented
 prompt: "history_aware" # history_aware, contextualize_q, qa_assistant
 embedding: "openai"
