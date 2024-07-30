@@ -70,6 +70,21 @@ cd RAG-System-Optimization
    uvicorn api.main:app --reload
 ```
 
+4. Query the Backend API
+
+- Post Request at `http://127.0.0.1:8000/qa/{any_save_name_to_save_conversation}`
+
+```sh
+   {
+      "query": "Who decided to give one of her kidneys?"
+   }
+```
+![alt text](screenshots/image-10.png)
+
+- Returns a response with answer and context
+
+![alt text](screenshots/image11.png)
+
 ## Development
 
 - Use the Jupyter notebooks in the `notebooks/` directory for exploration and prototyping.
