@@ -26,11 +26,13 @@ class Retriever:
 
         self.retriever_type = config["retriever"]
 
+        print("The Retriever Type is :: ",config["retriever"])
+
         if config["retriever"] == "chroma_dense":
-            self.retriever = Chroma(persist_directory=self.persist_directory, embedding_function=OpenAIEmbeddings(openai_api_key=os.getenv("OPENAI_API_KEY")))
+            self.retriever = Chroma(embedding_function=OpenAIEmbeddings(openai_api_key=os.getenv("OPENAI_API_KEY")))
         if config["retriever"] == "qdrant_dense":
             client = QdrantClient(
-                path="db/qdrant",
+                location=":memory:",
             )
             client.create_collection("MyCollection", vectors_config=models.VectorParams(size=1536, distance=models.Distance.COSINE))
             
@@ -85,8 +87,8 @@ class Retriever:
         results = self.retriever.similarity_search(query, k = 2)
         return results
     def get_retriever(self):
-        if config["retriever"] == "dense" or config["retriever"] == "qdrant_dense":
-            return self.retriever.as_retriever(search_kwargs={'k': 2})
+        if config["retriever"] == "chroma_dense" or config["retriever"] == "qdrant_dense":
+            return self.retriever.as_retriever(search_kwargs={'k': 4})
         elif config["retriever"] == "hybrid":
             return self.retriever
 
