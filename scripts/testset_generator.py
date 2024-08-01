@@ -5,7 +5,7 @@ from ragas.testset.evolutions import simple, reasoning, multi_context
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 import pandas as pd
 
-def generate_testset(test_size: int = 6) -> pd.DataFrame:
+def generate_testset(test_size: int = 10) -> pd.DataFrame:
     """
     Generate a testset using the TestsetGenerator class from the ragas package.
 
@@ -29,7 +29,7 @@ def generate_testset(test_size: int = 6) -> pd.DataFrame:
     # Generator with OpenAI models
     generator_llm = ChatOpenAI(model="gpt-3.5-turbo-16k")
 
-    critic_llm = ChatOpenAI(model="gpt-4-turbo")
+    critic_llm = ChatOpenAI(model="gpt-4o-mini")
 
     embeddings = OpenAIEmbeddings()
 
@@ -41,7 +41,7 @@ def generate_testset(test_size: int = 6) -> pd.DataFrame:
     testset = generator.generate_with_langchain_docs(
         article_slice,
         test_size=test_size,
-        distributions={simple: 0.33, reasoning: 0.34, multi_context: 0.33},
+        distributions={simple: 0.25, reasoning: 0.35, multi_context: 0.4},
     )
 
     synthetic = testset.to_pandas()
