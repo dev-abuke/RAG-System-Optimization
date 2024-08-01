@@ -1,48 +1,29 @@
-import pandas as pd
-from unittest.mock import MagicMock, patch
-from scripts.testset_generator import generate_testset
+import unittest
+from unittest.mock import patch, mock_open
+import yaml, os, sys
 
-def test_generate_testset():
-    # Test default test_size
-    with patch('scripts.testset_generator.load_dataset') as mock_load_dataset:
-        mock_dataset = MagicMock()
-        mock_dataset.__getitem__.return_value = [
-            {'article': 'Article 1', 'id': 1},
-            {'article': 'Article 2', 'id': 2},
-            {'article': 'Article 3', 'id': 3},
-        ]
-        mock_load_dataset.return_value = mock_dataset
-        result = generate_testset()
-        assert isinstance(result, pd.DataFrame)
-        assert len(result) == 6
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from scripts.generate_test_name import load_config, get_test_name
 
-    # Test custom test_size
-    with patch('scripts.testset_generator.load_dataset') as mock_load_dataset:
-        mock_dataset = MagicMock()
-        mock_dataset.__getitem__.return_value = [
-            {'article': 'Article 1', 'id': 1},
-            {'article': 'Article 2', 'id': 2},
-            {'article': 'Article 3', 'id': 3},
-        ]
-        mock_load_dataset.return_value = mock_dataset
-        result = generate_testset(test_size=3)
-        assert isinstance(result, pd.DataFrame)
-        assert len(result) == 3
+class TestGenerateTestName(unittest.TestCase):
 
-    # Test saving to file
-    with patch('scripts.testset_generator.load_dataset') as mock_load_dataset:
-        mock_dataset = MagicMock()
-        mock_dataset.__getitem__.return_value = [
-            {'article': 'Article 1', 'id': 1},
-            {'article': 'Article 2', 'id': 2},
-            {'article': 'Article 3', 'id': 3},
-        ]
-        mock_load_dataset.return_value = mock_dataset
-        with patch('scripts.testset_generator.pd.Timestamp.now') as mock_timestamp:
-            mock_timestamp.return_value = '20220101-000000'
-            with patch('scripts.testset_generator.pd.DataFrame.to_csv') as mock_to_csv:
-                generate_testset()
-                mock_to_csv.assert_called_once_with(
-                    '/teamspace/studios/this_studio/RAG-System-Optimization/data/20220101-000000testset.csv',
-                    index=False
-                )
+    @patch('scripts.generate_test_name.yaml.safe_load')
+    @patch('builtins.open', new_callable=mock_open, read_data="model: gpt-3.5-turbo\nretriever: hybrid\ntext_splitter: recursive\nchunk_size: 900\nchunk_overlap: 50\nquery_translation: hyde")
+    def test_load_config(self, mock_open, mock_safe_load):
+        """Test loading the config file."""
+        mock_config = {'model': 'gpt-3.5-turbo', 'retriever': 'hybrid', 'text_splitter': 'recursive', 'chunk_size': 900, 'chunk_overlap': 50, 'query_translation': 'hyde'}
+        mock_safe_load.return_value = mock_config
+        config = load_config()
+        self.assertEqual(config, mock_config)
+        mock_safe_load.assert_called_once_with(mock_open.return_value)
+
+    @patch('scripts.generate_test_name.load_config')
+    def test_get_test_name(self, mock_load_config):
+        """Test generating the test name."""
+        mock_config = {'model': 'gpt-3.5-turbo', 'retriever': 'hybrid', 'text_splitter': 'recursive', 'chunk_size': 900, 'chunk_overlap': 50, 'query_translation':'hyde'}
+        mock_load_config.return_value = mock_config
+        test_name = get_test_name()
+        self.assertEqual(test_name, 'gpt-35-turbo_hybrid_recursive_900_50_hyde')
+
+if __name__ == '__main__':
+    unittest.main()
