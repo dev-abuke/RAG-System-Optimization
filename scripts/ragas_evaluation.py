@@ -12,7 +12,11 @@ from ragas.metrics import (
 
 class RagasEvaluation:
 
-    def __init__(self, test_name: str, number_of_questions: int = 3):
+    def __init__(
+            self, test_name: str, 
+            number_of_questions: int = 3, 
+            test_sets_csv_path: str = '../data/20240801-092254testset.csv'):
+        
         # make sure the class is initialized with a test_name else raise an error
         self.test_name = test_name
 
@@ -21,6 +25,11 @@ class RagasEvaluation:
         if not self.test_name:
             raise ValueError("Please specify a test_name.") 
 
+        self.test_sets_df = pd.read_csv(test_sets_csv_path)
+
+        if self.test_sets_df.shape[0] < self.number_of_questions:
+            raise ValueError("The number of questions is greater than the number of rows in the test_sets_df.")
+
         self.questions, self.ground_truths, self.evolution_type = self.get_questions()
 
         self.dataset = self.get_dataset()
@@ -28,14 +37,13 @@ class RagasEvaluation:
         self.result_df: pd.DataFrame = self.run_evaluation()
 
     def get_questions(self):
-        test_sets_df = pd.read_csv('/teamspace/studios/this_studio/RAG-System-Optimization/data/merged_testset.csv')
 
         # get the question and ground truth from the test_sets_df dataframe and store in num_question and num_ground_truth
-        num_question = test_sets_df['question'][5:5 + self.number_of_questions]
+        num_question = self.test_sets_df['question'][:self.number_of_questions]
         
-        num_ground_truth = test_sets_df['ground_truth'][5:5 + self.number_of_questions]
+        num_ground_truth = self.test_sets_df['ground_truth'][:self.number_of_questions]
 
-        evolution_type = test_sets_df['evolution_type'][5:5 + self.number_of_questions]
+        evolution_type = self.test_sets_df['evolution_type'][:self.number_of_questions]
 
         questions = []
 
@@ -111,16 +119,11 @@ class RagasEvaluation:
         # calculate the average score of context precision per total score
         rows = self.result_df.shape[0]
 
-        self.result_df.head()
-
         context_recall_sum = self.result_df['context_recall'].sum()
-
         faithfulness_sum = self.result_df['faithfulness'].sum()
-
         answer_correctness_sum = self.result_df['answer_correctness'].sum()
 
-        context_recall_score =  context_recall_sum / rows * 100
-
+        context_recall_score = context_recall_sum / rows * 100
         faithfulness_score = faithfulness_sum / rows * 100
 
         answer_correctness_score = answer_correctness_sum / rows * 100
@@ -130,8 +133,8 @@ class RagasEvaluation:
         scores = [context_recall_score, faithfulness_score, answer_correctness_score]
 
         plt.figure(figsize=(6, 3))
-        plt.bar(labels, scores, color=['darkBlue', 'green', 'purple', 'blue'])
-        # tilt the x axis lables to 45 degrees 
+        plt.bar(labels, scores, color=['darkBlue', 'green', 'purple'])
+        # tilt the x axis labels to 45 degrees
         plt.xticks(rotation=45, ha='right')
         plt.xlabel('Metrics')
         plt.ylabel('Scores (%)')
@@ -141,6 +144,16 @@ class RagasEvaluation:
         # Annotate bars with scores
         for i, score in enumerate(scores):
             plt.text(i, score - 10, f'{score:.2f}%', ha='center', va='top', color='white')
+
+        # Add legend for evolution types
+        evolution_types = self.result_df['evolution_type'].unique()
+        evolution_colors = ['red', 'blue', 'yellow', 'cyan']  # Define colors for each evolution type
+        color_map = {evolution: color for evolution, color in zip(evolution_types, evolution_colors)}
+
+        for evolution, color in color_map.items():
+            plt.scatter([], [], color=color, label=evolution)  # Adding dots for legend
+
+        plt.legend(title="Evolution Types")
 
         plt.show()
 
