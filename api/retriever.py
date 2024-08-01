@@ -8,7 +8,7 @@ from langchain.retrievers import WeaviateHybridSearchRetriever
 from qdrant_client import QdrantClient, models
 
 from .factory import get_text_splitter
-from .config import load_config
+from .config import load_config, get_test_name_weviate
 
 import logging
 import os
@@ -21,6 +21,8 @@ config = load_config()
 class Retriever:
     def __init__(self, documents: list):
         self.documents = documents
+        
+        index_name = get_test_name_weviate()
 
         self.persist_directory = 'db'
 
@@ -29,17 +31,17 @@ class Retriever:
         print("The Retriever Type is :: ",config["retriever"])
 
         if config["retriever"] == "chroma_dense":
-            self.retriever = Chroma(embedding_function=OpenAIEmbeddings(openai_api_key=os.getenv("OPENAI_API_KEY")))
+            self.retriever = Chroma(collection_name=index_name, embedding_function=OpenAIEmbeddings(openai_api_key=os.getenv("OPENAI_API_KEY")))
         if config["retriever"] == "qdrant_dense":
             client = QdrantClient(
                 location=":memory:",
             )
-            client.create_collection("MyCollection", vectors_config=models.VectorParams(size=1536, distance=models.Distance.COSINE))
+            client.create_collection(index_name, vectors_config=models.VectorParams(size=1536, distance=models.Distance.COSINE))
             
             self.retriever = Qdrant(
                 client=client,
                 embeddings = OpenAIEmbeddings(openai_api_key=os.getenv("OPENAI_API_KEY")),
-                collection_name="MyCollection"
+                collection_name=index_name
             )
             
         elif config["retriever"] == "hybrid":
@@ -58,8 +60,8 @@ class Retriever:
             )
 
             self.retriever = WeaviateHybridSearchRetriever(
+                index_name=index_name,
                 client=client,
-                index_name="Metala",
                 text_key="hybrid_search_text",
                 attributes=[],
                 create_schema_if_missing=True,
