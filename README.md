@@ -198,6 +198,24 @@ There is a clear win in answer correctness from our previous evaluations but fai
 
 **Verdict:**  Optimize for answer correctness using reranking methods
 
+### Result 8
+
+![alt text](screenshots/hyde_image.png)
+
+#### Result Interpretation
+
+Context Recall - The model has an excellent ability to recall relevant context, achieving a high score of 91.67%. This indicates that for each of the ground truth statements, it can be attributed to the retrieved context.
+
+Faithfulness - The faithfulness score of 80.56% suggests that for each of the generated statements for each question, it can be inferred from the given context.
+
+Answer Correctness - With a score of 83.19%, the model demonstrates a strong capability in providing correct answers. This involves gauging the accuracy of the generated answer when compared to the ground truth which means the answer and ground truth are both semanticaly and factually similar. 
+
+**Verdict:** The [gpt35turbo_hybrid_recursive_900_50_hyde](data/gpt35turbo_hybrid_recursive_900_50_hyde.csv) model shows promising performance with high context recall and good scores in faithfulness and answer correctness (which is one of the best so far - previosly no more than 65%). The results indicate that the RAG system is highly effective in recalling context and generating faithful and correct answers. However, there is still room for improvement, particularly in enhancing the faithfulness of the answers to ensure even higher accuracy.
+
+**Recommendations**
+
+To further optimize the performance of the system, we coudl optimize on Faithfulness - Focus on improving the faithfulness score by reranking methods and experimenting with different chunking mechanisms
+
 
 ## Contributing
 
@@ -215,7 +233,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Acknowledgments
 
-- Rizzbuzz AI for the challenge, GPT_API_Key and guidance
+- Rizzbuzz AI for the Challenge, GPT_API_KEY and Guidance
 
 ## Contact
 
