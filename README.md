@@ -43,19 +43,19 @@ Develop a Retrieval-Augmented Generation (RAG) system, benchmark its performance
 1. Install Poetry - If Not Available
 
 ```sh
-curl -sSL https://install.python-poetry.org | python3 -
+   curl -sSL https://install.python-poetry.org | python3 -
 ```
 
 2. Clone the repository
 
 ```sh
-git clone https://github.com/dev-abuke/RAG-System-Optimization.git
+   git clone https://github.com/dev-abuke/RAG-System-Optimization.git
 ```
 
 2. Navigate to project directory
 
 ```sh
-cd RAG-System-Optimization
+   cd RAG-System-Optimization
 ```
 
 3. Install dependencies
